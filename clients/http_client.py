@@ -3,7 +3,6 @@ from utils.logger import simple_logger
 
 class HTTPClient:
     def __init__(self, url, logger):
-        self.logger = logger
         self.base_url = url.rstrip('/')
         self.logger = logger
         self.session = requests.Session()
@@ -14,6 +13,7 @@ class HTTPClient:
         url = self.base_url + endpoint
         response = self.session.post(url, data=data, headers=headers)
         response.raise_for_status()
+
         return response
 
 
@@ -22,4 +22,5 @@ class HTTPClient:
         url = self.base_url + endpoint
         response = self.session.get(url, params=params, headers=headers)
         response.raise_for_status()
+
         return response

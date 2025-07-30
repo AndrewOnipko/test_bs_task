@@ -7,8 +7,11 @@ from services.db_service import DBService
 from clients.http_client import HTTPClient
 from parsers.table_parser import TableParser
 from utils.table_formatter import TableFormatter
+from dotenv import load_dotenv
 
-USENAME = os.getenv('username')
+load_dotenv()
+
+USERNAME = os.getenv('user')
 PASSWORD = os.getenv('password')
 URL = os.getenv('url')
 script_name = os.path.basename(__file__)
@@ -31,13 +34,12 @@ for handler in logging.getLogger().handlers:
 
 def main():
     logger = logging.getLogger()
-    url = URL
-    client = HTTPClient(url, logger)
-    auth = AuthService(client, USENAME, PASSWORD, logger)
+    client = HTTPClient(URL, logger)
+    auth = AuthService(client, USERNAME, PASSWORD, logger)
     db = DBService(client, logger)
     parser = TableParser(logger)
     formatter = TableFormatter(logger)
-    controller = MainController(auth, db, parser, formatter)
+    controller = MainController(auth, db, parser, formatter, logger)
     controller.run()
 
 if __name__ == "__main__":

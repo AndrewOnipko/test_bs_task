@@ -1,5 +1,5 @@
 from utils.logger import simple_logger
-from bs4 import BeautifulSoup
+from utils.exceptions import DBError
 
 class DBService:
     def __init__(self, client, logger):
@@ -14,22 +14,23 @@ class DBService:
         
         try:
             params = {
-            "route": "/sql",
-            "db":"testDB",
-            "table":"users",
-            "pos":"0",
-            "ajax_request": "true",
-            "ajax_page_request": "true",
-            "token": self.token
+                "route": "/sql",
+                "db": "testDB",
+                "table": "users",
+                "pos": "0",
+                "ajax_request": "true",
+                "ajax_page_request": "true",
+                "token": self.token
             }
 
             response = self.client.get('/index.php?route=/', params=params)
             json_data = response.json()
-            html = json_data.get('message', '')
+
+            html = json_data.get('message')
+            if not html:
+                raise DBError("Ответ не содержит HTML таблицу.")
 
             return html
-        
+
         except Exception as e:
-            self.logger.error(f"Ошибка при получении таблицы: {e}")
-            raise
-        
+            raise DBError(f"Не удалось получить таблицу: {e}") from e
